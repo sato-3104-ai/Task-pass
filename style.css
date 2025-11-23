@@ -21,6 +21,22 @@
 .primary-text { color: #f97316; }
 .primary-border { border-color: #f97316; }
 
+/* --- FAB/Primary Buttonのカラー修正 (優先度を上げる) --- */
+.primary-button {
+    /* グラデーション: 深いオレンジから標準オレンジへ */
+    background-image: linear-gradient(to right, #ff8c00, #f97316) !important; /* <--- !important を追加 */
+    background-color: #f97316 !important; /* フォールバックカラーにも !important */
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4) !important;
+    transition: all 0.3s ease;
+}
+.primary-button:hover {
+    background-image: linear-gradient(to right, #ff991a, #fa832e) !important; /* <--- !important を追加 */
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6) !important;
+    transform: translateY(-1px); 
+}
+/* ----------------------------------------------------------------- */
+
+
 /* --- ダークモードの基本定義（Tailwindオーバーライド） --- */
 @media (prefers-color-scheme: dark) {
     body { background-color: #121212; color: #e0e0e0; } 
