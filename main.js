@@ -1,6 +1,6 @@
 // --- Supabase 連携設定 (デモ/プレースホルダー) ---
-const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // 実際のURLに置き換えてください
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // 実際のキーに置き換えてください
+const SUPABASE_URL = 'https://sato-3104-ai.github.io/task-pass/'; // 実際のURLに置き換えてください
+const SUPABASE_ANON_KEY = 'sb_publishable_AUquDB9qT6ZK-jnbXmsLOA_VviEnQBM'; // 実際のキーに置き換えてください
 
 // データベース連携をシミュレートするインメモリデータ
 const memberData = [
@@ -704,4 +704,5 @@ function closeAddMemberModal() {
 }
 function renderMemberModal(filterType, searchTerm, mode, deptFilter) {
     // ... メンバーリストのレンダリングロジック ...
+
 }
