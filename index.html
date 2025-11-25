@@ -8,11 +8,11 @@
     <!-- 🚨 注意: リポジトリ名が異なる場合は、以下の "task-pass" をお客様のリポジトリ名に変更してください。 -->
     <base href="/task-pass/"> 
     
-    <!-- 外部CSSとJSの読み込み -->
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+    <!-- 外部CSSとJSの読み込み - 絶対パスに修正し、ベースパスの影響を回避 -->
+    <link rel="stylesheet" href="/task-pass/style.css">
+    <link rel="manifest" href="/task-pass/manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="main.js" defer></script>
+    <script src="/task-pass/main.js" defer></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
@@ -78,7 +78,7 @@
                         </div>
 
                         <input type="text" id="signup-name" placeholder="氏名 (*必須)" class="w-full p-3 border border-gray-300 rounded-lg mb-3 dark:bg-gray-700 dark:border-gray-600">
-                        <input type="text" id="signup-furigana" placeholder="フリガナ (*必須)" class="w-full p-3 border border-gray-300 rounded-lg mb-3 dark:bg-gray-700 dark:border-gray-600">
+                        <input type="text" id="signup-furigana" placeholder="フリガナ (*必須)" class="w-full p-3 border rounded-lg mb-3 dark:bg-gray-700 dark:border-gray-600">
                         <input type="email" id="signup-email" placeholder="メールアドレス (*いずれか必須)" class="w-full p-3 border border-gray-300 rounded-lg mb-3 dark:bg-gray-700 dark:border-gray-600">
                         <input type="tel" id="signup-phone" placeholder="電話番号 (*いずれか必須)" class="w-full p-3 border border-gray-300 rounded-lg mb-3 dark:bg-gray-700 dark:border-gray-600">
                         <input type="text" id="signup-dept" placeholder="所属部署 (任意)" class="w-full p-3 border border-gray-300 rounded-lg mb-3 dark:bg-gray-700 dark:border-gray-600">
