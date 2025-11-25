@@ -379,7 +379,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // PWA Service Workerの登録
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
+        // 🚨 修正: 登録パスを相対パスに修正
+        // Service Workerはルートパスから登録される必要があり、GitHub Pagesでは手前にリポジトリ名が必要です。
+        const swUrl = './sw.js'; // index.htmlからの相対パス
+        navigator.serviceWorker.register(swUrl)
             .then(reg => console.log('Service Worker registered.', reg))
             .catch(err => console.error('Service Worker registration failed:', err));
     }
