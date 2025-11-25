@@ -4,34 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDo Flow App</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#3367D6">
-    
+    <!-- Tailwind CSS CDNの読み込み -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+    <!-- カスタムスタイルの読み込み -->
     <link rel="stylesheet" href="style.css">
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- PWAマニフェストファイル: manifest.jsonのパスを修正 -->
+    <link rel="manifest" href="/manifest.json">
+    <!-- GitHub Pagesでサブディレクトリ（例: /task-pass/）を使用する場合、ベースパスを設定してください -->
+    <!-- <base href="/task-pass/"> -->
 
+    <!-- main.jsをdefer属性付きで<head>に移動し、全ての関数定義が利用可能になるようにします -->
     <script src="main.js" defer></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
     <div id="app" class="max-w-4xl mx-auto bg-white shadow-xl">
 
+        <!-- 0. 認証/登録画面 (初期表示) -->
         <section id="auth-section" class="auth-container">
             <div class="w-full max-w-lg p-6 sm:p-8 bg-white rounded-xl material-card-shadow m-4">
                 <h1 class="text-3xl font-bold primary-text text-center mb-2">ToDo</h1>
                 <p class="text-center text-gray-500 mb-8">タスクを明確にし流れや現在地を把握する</p>
 
+                <!-- 認証方法の選択タブ -->
                 <div class="flex mb-6 border-b">
                     <button onclick="setAuthMode('login')" class="auth-tab w-1/2 py-3 font-semibold text-sm primary-border border-b-2 primary-text">ログイン</button>
                     <button onclick="setAuthMode('signup')" class="auth-tab w-1/2 py-3 font-semibold text-sm text-gray-500 border-b-2 border-transparent hover:border-gray-300">新規登録</button>
                 </div>
 
+                <!-- フォームコンテナ -->
                 <div id="form-container">
+                    <!-- 初期モード (ログイン) -->
                     <div id="login-form">
+                        <!-- Googleログインボタン -->
                         <button class="w-full flex items-center justify-center p-3 border border-gray-300 rounded-lg mb-3 transition 
                                 text-gray-700 dark:text-white dark:bg-gray-800 dark:border-gray-700 
                                 hover:bg-gray-200 dark:hover:bg-gray-700">
@@ -45,16 +51,20 @@
                             <div class="flex-grow border-t border-gray-300"></div>
                         </div>
 
-                        <input type="email" id="login-email" placeholder="メールアドレス または 電話番号" class="w-full p-3 border border-gray-300 rounded-lg mb-3 dark:bg-gray-700 dark:border-gray-600">
-                        <input type="password" id="login-password" placeholder="パスワード" class="w-full p-3 border border-gray-300 rounded-lg mb-4 dark:bg-gray-700 dark:border-gray-600">
+                        <!-- メール/電話番号フォーム -->
+                        <input type="email" placeholder="メールアドレス または 電話番号" class="w-full p-3 border border-gray-300 rounded-lg mb-3 dark:bg-gray-700 dark:border-gray-600">
+                        <input type="password" placeholder="パスワード" class="w-full p-3 border border-gray-300 rounded-lg mb-4 dark:bg-gray-700 dark:border-gray-600">
                         
+                        <!-- ログインボタン (グラデーション適用) -->
                         <button class="w-full primary-button text-white font-bold p-3 rounded-lg transition" onclick="simulateLogin()">
                             ログイン
                         </button>
                     </div>
 
+                    <!-- サインアップフォーム (初期非表示) -->
                     <div id="signup-form" class="hidden">
                         
+                        <!-- Googleで登録ボタン -->
                         <button class="w-full flex items-center justify-center p-3 border border-gray-300 rounded-lg mb-3 transition 
                                 text-gray-700 dark:text-white dark:bg-gray-800 dark:border-gray-700 
                                 hover:bg-gray-200 dark:hover:bg-gray-700" onclick="showTemporaryMessage('Google認証をシミュレートします。')">
@@ -68,54 +78,66 @@
                             <div class="flex-grow border-t border-gray-300"></div>
                         </div>
                         
+                        <!-- 必須情報 - 氏名 (必須) -->
                         <input type="text" id="signup-name" placeholder="氏名 (必須)" required class="w-full p-3 border border-gray-300 rounded-lg mb-3 dark:bg-gray-700 dark:border-gray-600">
                         
+                        <!-- 必須情報 - フリガナ (必須) -->
                         <input type="text" id="signup-furigana" placeholder="フリガナ (必須)" required class="w-full p-3 border border-gray-300 rounded-lg mb-3 dark:bg-gray-700 dark:border-gray-600">
                         
+                        <!-- 必須情報 - メール/電話番号 (どちらか必須) -->
                         <div>
                             <input type="email" id="signup-email" placeholder="メールアドレス" class="w-full p-3 border border-gray-300 rounded-lg mb-1 dark:bg-gray-700 dark:border-gray-600">
                             <input type="tel" id="signup-phone" placeholder="電話番号" class="w-full p-3 border border-gray-300 rounded-lg mb-1 dark:bg-gray-700 dark:border-gray-600">
                             <p class="text-xs text-red-500 dark:text-red-400 mb-3">※ メールアドレスまたは電話番号のどちらか一方が必須です。</p>
                         </div>
                         
+                        <!-- 所属部署（任意） -->
                         <input type="text" placeholder="所属部署（例：開発部、営業）" class="w-full p-3 border border-gray-300 rounded-lg mb-3 dark:bg-gray-700 dark:border-gray-600">
                         
+                        <!-- パスワード (必須) -->
                         <input type="password" id="signup-password" placeholder="パスワード (6文字以上・必須)" required class="w-full p-3 border border-gray-300 rounded-lg mb-4 dark:bg-gray-700 dark:border-gray-600">
 
+                        <!-- 登録ボタン (グラデーション適用) -->
                         <button class="w-full primary-button text-white font-bold p-3 rounded-lg transition" onclick="validateAndRegister()">
                             登録
                         </button>
                     </div>
                 </div>
 
+                <!-- 会社登録ボタン (Admin向け) -->
                 <button onclick="showSection('company-registration')" class="w-full mt-6 text-sm text-gray-500 hover:text-orange-500 transition border-t pt-4 border-gray-200 dark:border-gray-700">
                     🏢 初めての会社登録はこちら
                 </button>
             </div>
         </section>
 
+        <!-- 0b. 会社登録/初期設定画面 (初期非表示) -->
         <section id="company-registration-section" class="auth-container hidden">
             <div class="w-full max-w-lg p-6 sm:p-8 bg-white rounded-xl material-card-shadow m-4">
                 <h2 class="text-2xl font-bold primary-text text-center mb-6">🏢 会社登録と初期設定</h2>
                 <p class="text-center text-gray-600 dark:text-gray-400 mb-6">組織の管理者アカウントを設定し、ワークスペースを作成します。</p>
 
                 <div class="space-y-4">
+                    <!-- 会社名 -->
                     <div>
                         <label for="company-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">会社名 / 組織名 (必須)</label>
                         <input type="text" id="company-name" placeholder="例: 株式会社 Next Flow" class="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:border-orange-500">
                     </div>
                     
+                    <!-- 会社ID (ドメイン/サブドメインに使用) -->
                     <div>
                         <label for="company-id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">会社ID / ワークスペースID (必須・英数)</label>
                         <input type="text" id="company-id" placeholder="例: nextflow (招待リンクに使用)" class="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:border-orange-500">
                     </div>
 
+                    <!-- 部署リスト初期設定 -->
                     <div>
                         <label for="initial-departments" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">初期部署リスト (カンマ区切り)</label>
                         <textarea id="initial-departments" rows="3" placeholder="例: 開発部, 営業部, 企画部" class="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:border-orange-500"></textarea>
                         <p class="text-xs text-gray-500 mt-1">この設定は後で管理画面から変更できます。</p>
                     </div>
 
+                    <!-- 登録ユーザー情報 (新規登録フォームから引き継ぐことを想定) -->
                     <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                         <p class="text-sm font-semibold text-gray-800 dark:text-gray-300">管理者: 山田 太郎 (PM)として登録されます</p>
                     </div>
@@ -130,18 +152,29 @@
         </section>
 
 
+        <!-- ここからメインアプリのコンテンツ (初期非表示) -->
         <div id="main-app-content" class="hidden">
             
+            <!-- ナビゲーションタブ (PC:上部固定 / モバイル:下部固定) -->
+            <!-- Tailwindのレスポンシブクラスで切り替え -->
             <div class="flex w-full border-t md:border-b md:border-t-0 fixed bottom-0 z-40 md:sticky md:top-0 bg-white material-card-shadow dark:bg-gray-800">
+                <!-- タブを4つに分割 -->
                 <button onclick="showSection('task')" class="tab-button w-1/4 py-3 font-semibold text-sm border-b-2 primary-border primary-text">タスクリスト</button>
                 <button onclick="showSection('boardlist')" class="tab-button w-1/4 py-3 font-semibold text-sm text-gray-500 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600">掲示板リスト</button>
+                <!-- メンバータブ -->
                 <button onclick="showSection('members')" class="tab-button w-1/4 py-3 font-semibold text-sm text-gray-500 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600">メンバー</button>
+                <!-- プロフィールタブ -->
                 <button onclick="showSection('profile')" class="tab-button w-1/4 py-3 font-semibold text-sm text-gray-500 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600">プロフィール</button>
             </div>
 
+            <!-- 1. タスクリスト（統合メイン画面） - モバイル下部パディング追加 -->
             <section id="task-list-section" class="px-4 pt-4 space-y-6 pb-24 md:pb-6">
+                <!-- ... タスクリストのコンテンツ ... -->
+                
+                <!-- ヘッダーと絞り込み -->
                 <div class="flex justify-between items-center">
                     <h1 class="text-xl font-bold text-gray-800 dark:text-e0e0e0">🗓️ 期日順タスク</h1>
+                    <!-- 絞り込み機能 -->
                     <select id="filter-select" onchange="filterTasks(this.value)" class="p-1 border rounded-lg text-sm bg-white dark:bg-gray-800 dark:border-gray-700">
                         <option value="all">すべて</option>
                         <option value="today">本日</option>
@@ -152,21 +185,28 @@
                     </select>
                 </div>
                 
+                <!-- タスクカードコンポーネント (タスクID=1, 達成率=30%, 自分の担当) -->
                 <div id="task-1" class="task-card material-card-shadow rounded-xl bg-white dark:bg-gray-800 transition duration-300 ease-in-out border border-transparent hover:border-orange-500" data-progress="30" data-is-mine="true">
                     <div class="flex items-center p-4">
+                        <!-- 左側: 完了ボタン (パスを兼ねる) -->
                         <div class="flex flex-col space-y-2 mr-4">
+                            <!-- 完了ボタン -->
                             <button class="action-circle bg-green-500 text-white hover:bg-green-600 shadow-md" onclick="handleTaskAction(1, 'done')">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                             </button>
                         </div>
 
+                        <!-- 中央: メイン情報 -->
                         <div class="flex-grow">
                             <div class="flex justify-between items-center mb-1">
                                 <p class="task-title font-extrabold text-lg">デザインプロトタイプの作成</p>
+                                <!-- 右上: 期日 -->
                                 <span class="text-xs text-gray-500 flex-shrink-0">~ 11/25 (火)</span>
                             </div>
+                            <!-- 担当から次パスする方へ変更 -->
                             <p class="assigned-text mb-2">次パスする方: 佐藤 隆 (デザイナー)</p>
                             
+                            <!-- 達成率バー -->
                             <div class="flex items-center">
                                 <span class="progress-percent text-xs font-semibold mr-2 text-blue-600">30%</span>
                                 <div class="flex-grow bg-gray-200 rounded-full h-2">
@@ -175,22 +215,28 @@
                             </div>
                         </div>
                         
+                        <!-- 右側: 情報ボタン -->
                         <div class="flex flex-col space-y-2 ml-4">
+                            <!-- フローボタン (フロー展開/ジャンプ) -->
                             <button id="flow-toggle-1" class="action-circle bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700" onclick="toggleFlowDetail(1)">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                             </button>
+                            <!-- 掲示板ボタン -->
                             <button class="action-circle bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700" onclick="navigateToBoard(1)">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 4v-4z"></path></svg>
                             </button>
                         </div>
                     </div>
                     
+                    <!-- フロー詳細 (展開可能) -->
                     <div id="flow-detail-1" class="hidden border-t p-4 bg-gray-50 dark:bg-gray-700">
+                        <!-- タイトルは落ち着いた色に変更 -->
                         <h4 class="text-sm font-bold mb-3 text-gray-800 dark:text-gray-300">フロー詳細: 新機能開発プロジェクト</h4>
                         <div class="space-y-1">
                             <p class="flow-detail-text flow-completed">1. 初期コンセプトの定義と設計 (PM)</p>
                             <p class="flow-detail-text flow-completed">2. ユーザーヒアリングとフィードバック収集 (デザイナー)</p>
                             <p class="flow-detail-text flow-current">3. デザインプロトタイプの作成 (佐藤) <span class="text-xs">[進行中]</span></p>
+                            <!-- Clickable Jump Steps (Pending steps only) -->
                             <button class="flow-detail-text flow-pending text-left w-full hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md p-1 -m-1 transition disabled:opacity-50" onclick="openJumpConfirmationModal(1, '4', 'フロントエンドの実装（田中）')">4. フロントエンドの実装（田中）<span class="text-xs primary-text ml-1"> [ジャンプ]</span></button>
                             <button class="flow-detail-text flow-pending text-left w-full hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md p-1 -m-1 transition disabled:opacity-50" onclick="openJumpConfirmationModal(1, '5', 'バックエンドのAPI設計（山本）')">5. バックエンドのAPI設計（山本）<span class="text-xs primary-text ml-1"> [ジャンプ]</span></button>
                             <button class="flow-detail-text flow-pending text-left w-full hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md p-1 -m-1 transition disabled:opacity-50" onclick="openJumpConfirmationModal(1, '6', '全体結合テスト（PM）')">6. 全体結合テスト（PM）<span class="text-xs primary-text ml-1"> [ジャンプ]</span></button>
@@ -198,21 +244,26 @@
                     </div>
                 </div>
 
+                <!-- タスクカードコンポーネント (タスクID=2, 達成率=75%, 自分の担当ではない) -->
                 <div id="task-2" class="task-card material-card-shadow rounded-xl bg-white dark:bg-gray-800 transition duration-300 ease-in-out border border-transparent hover:border-orange-500" data-progress="75" data-is-mine="false">
                     <div class="flex items-center p-4">
+                        <!-- 左側: アクションボタン (自分の担当ではないため、無効化/控えめに) -->
                         <div class="flex flex-col space-y-2 mr-4 opacity-50">
                             <button class="action-circle bg-gray-200 text-gray-400 dark:bg-gray-700 dark:text-gray-500" disabled>
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                             </button>
                         </div>
 
+                        <!-- 中央: メイン情報 -->
                         <div class="flex-grow">
                             <div class="flex justify-between items-center mb-1">
                                 <p class="task-title font-extrabold text-lg">バックエンドのAPI設計と実装</p>
                                 <span class="text-xs text-gray-500 flex-shrink-0">~ 11/30 (日)</span>
                             </div>
+                            <!-- 担当から次パスする方へ変更 -->
                             <p class="assigned-text mb-2">次パスする方: 山本 翼 (バックエンド)</p>
                             
+                            <!-- 達成率バー -->
                             <div class="flex items-center">
                                 <span class="progress-percent text-xs font-semibold mr-2 text-yellow-600">75%</span>
                                 <div class="flex-grow bg-gray-200 rounded-full h-2">
@@ -221,33 +272,41 @@
                             </div>
                         </div>
                         
+                        <!-- 右側: 情報ボタン -->
                         <div class="flex flex-col space-y-2 ml-4">
+                            <!-- フローボタン (フロー展開/ジャンプ) -->
                             <button id="flow-toggle-2" class="action-circle bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700" onclick="toggleFlowDetail(2)">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                             </button>
+                            <!-- 掲示板ボタン -->
                             <button class="action-circle bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700" onclick="navigateToBoard(2)">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 4v-4z"></path></svg>
                             </button>
                         </div>
                     </div>
                     
+                    <!-- フロー詳細 (展開可能) -->
                     <div id="flow-detail-2" class="hidden border-t p-4 bg-gray-50 dark:bg-gray-700">
+                        <!-- タイトルは落ち着いた色に変更 -->
                         <h4 class="text-sm font-bold mb-3 text-gray-800 dark:text-gray-300">フロー詳細: 新機能開発プロジェクト</h4>
                         <div class="space-y-1">
                             <p class="flow-detail-text flow-completed">1. 画面定義書の承認 (PM)</p>
                             <p class="flow-detail-text flow-completed">2. 初期環境構築 (開発A)</p>
                             <p class="flow-detail-text flow-current">3. API設計と実装 (山本) <span class="text-xs">[進行中]</span></p>
+                            <!-- Clickable Jump Steps (Disabled since this is not the user's task) -->
                             <button disabled class="flow-detail-text flow-pending text-left w-full rounded-md p-1 -m-1 opacity-50 cursor-default" onclick="openJumpConfirmationModal(2, '4', 'FEとの結合テスト')">4. FEとの結合テスト（田中）</button>
                             <button disabled class="flow-detail-text flow-pending text-left w-full rounded-md p-1 -m-1 opacity-50 cursor-default" onclick="openJumpConfirmationModal(2, '5', '最終レビュー')">5. 最終レビュー（PM）</button>
                         </div>
                     </div>
                 </div>
 
+                <!-- 完了済みタスクのトグル -->
                 <div class="pt-4 border-t mt-4 border-gray-200 dark:border-gray-700">
                     <button onclick="toggleCompletedTasks()" class="w-full flex justify-between items-center text-lg font-bold text-gray-800 dark:text-e0e0e0 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition">
                         <span>✅ 完了済みタスク</span>
                         <svg id="completed-toggle-icon" class="w-5 h-5 transition-transform duration-300 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
+                    <!-- 過去のタスクはここに表示される (JSでトグル) -->
                     <div id="completed-tasks-list" class="hidden opacity-50 space-y-3 p-2">
                         <p class="text-sm text-gray-500">（完了済みタスクのプレースホルダー）</p>
                     </div>
@@ -256,24 +315,32 @@
 
             </section>
             
+            <!-- 2. 実行可能リスト (廃止され、タスクリストに統合されたため、IDのみ残して非表示) -->
             <section id="action-section" class="hidden"></section>
 
+            <!-- 3. 専用掲示板リスト - モバイル下部パディング追加 -->
             <section id="board-list-section" class="px-4 pt-4 space-y-4 hidden pb-24 md:pb-4">
                 <h2 class="text-xl font-bold text-gray-800 dark:text-e0e0e0">✉️ 掲示板リスト</h2>
 
                 <div class="space-y-3">
+                    <!-- 掲示板カード 1: 進行中 + 未読あり -->
                     <div id="board-card-1" class="relative material-card-shadow rounded-xl bg-white dark:bg-gray-800 overflow-hidden cursor-pointer hover:shadow-lg transition" onclick="openBoardDetail(1, '新機能開発プロジェクト', 'ongoing')">
+                        <!-- 進行中ステータスバー (オレンジ) -->
                         <div class="status-bar bg-orange-500"></div>
                         <div class="p-4 pl-8">
                             <div class="flex justify-between items-start">
+                                <!-- 視認性向上クラス board-title を適用 -->
                                 <p class="font-bold text-lg board-title">新機能開発プロジェクト</p>
+                                <!-- 未読マーカー -->
                                 <span id="board-new-1" class="text-xs font-bold text-white bg-red-600 rounded-full px-2 py-0.5 animate-pulse">NEW</span>
                             </div>
                             <p class="text-sm text-gray-500 mt-1">最終投稿: 3分前 (佐藤)</p>
                         </div>
                     </div>
 
+                    <!-- 掲示板カード 2: 進行中 + 未読なし -->
                     <div id="board-card-2" class="relative material-card-shadow rounded-xl bg-white dark:bg-gray-800 overflow-hidden cursor-pointer hover:shadow-lg transition" onclick="openBoardDetail(2, '次期サービス マーケティング戦略', 'ongoing')">
+                        <!-- 進行中ステータスバー (オレンジ) -->
                         <div class="status-bar bg-orange-500"></div>
                         <div class="p-4 pl-8">
                             <div class="flex justify-between items-start">
@@ -284,7 +351,9 @@
                         </div>
                     </div>
                     
+                    <!-- 掲示板カード 3: 完了済み + 未読なし -->
                     <div id="board-card-3" class="relative material-card-shadow rounded-xl bg-white dark:bg-gray-800 overflow-hidden opacity-70 cursor-pointer hover:opacity-100 transition" onclick="openBoardDetail(3, '旧システム移行プロジェクト', 'completed')">
+                        <!-- 完了済みステータスバー (グレー) -->
                         <div class="status-bar bg-gray-400"></div>
                         <div class="p-4 pl-8">
                             <div class="flex justify-between items-start">
@@ -297,30 +366,38 @@
                 </div>
             </section>
             
+            <!-- 3b. 掲示板詳細ページ -->
             <section id="board-detail-section" class="hidden fixed inset-0 bg-white dark:bg-gray-900 z-40">
+                <!-- ヘッダー (タイトルと戻るボタン) -->
                 <div class="bg-white dark:bg-gray-800 p-4 border-b material-card-shadow sticky top-0 z-40">
                     <div class="flex items-center">
+                        <!-- 戻るボタン (左上) -->
                         <button onclick="closeBoardDetail()" class="text-gray-500 hover:text-gray-800 dark:hover:text-white transition primary-text hover:opacity-80 p-1 -ml-1 mr-3 flex-shrink-0">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                         </button>
+                        <!-- 掲示板タイトル (右側) - 視認性向上クラスを適用 -->
                         <h2 id="board-detail-title" class="text-xl font-extrabold text-gray-900 dark:text-white truncate flex-grow"></h2>
                     </div>
                 </div>
                 
                 <div class="p-4 space-y-4 overflow-y-auto" style="height: calc(100vh - 120px);">
-                     <div class="border p-3 rounded-xl material-card-shadow bg-gray-50 dark:bg-gray-800">
+                     <!-- 投稿フィールド (詳細ページ専用) -->
+                    <div class="border p-3 rounded-xl material-card-shadow bg-gray-50 dark:bg-gray-800">
                         <textarea placeholder="新しいメッセージを投稿..." rows="3" class="w-full resize-none focus:outline-none bg-transparent"></textarea>
                         <div class="flex justify-between items-center mt-2">
                             <div class="flex space-x-2 text-gray-500 text-sm">
                                 <button class="hover:text-orange-600 transition px-2 py-1 rounded-full border dark:border-gray-600">ファイル</button>
                                 <button class="hover:text-orange-600 transition px-2 py-1 rounded-full border dark:border-gray-600">リンク</button>
                             </div>
+                            <!-- 投稿ボタン (グラデーション適用) -->
                             <button class="primary-button text-white px-4 py-2 rounded-xl text-sm font-semibold">投稿</button>
                         </div>
                     </div>
 
+                    <!-- 投稿リスト (デモコンテンツ) -->
                     <div class="space-y-4">
                         
+                        <!-- リンク投稿 (URL OGP表現) -->
                         <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 material-card-shadow">
                             <p class="text-sm text-gray-700 dark:text-gray-300 mb-3">田中: 新しいデザインシステムガイドラインのリンクです！</p>
                             <div class="border rounded-lg overflow-hidden bg-white dark:bg-gray-800 cursor-pointer hover:shadow-md transition">
@@ -329,18 +406,22 @@
                                         <p class="font-bold primary-text text-sm">デザインガイドライン - Figma</p>
                                         <p class="text-xs text-gray-500 truncate">https://www.figma.com/guidelines/v4/...</p>
                                     </div>
+                                    <!-- Icon for link -->
                                     <svg class="w-6 h-6 text-gray-400 flex-shrink-0 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- ファイル添付投稿 (PDF/Excel 表現) -->
                         <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 material-card-shadow">
                             <p class="text-sm text-gray-700 dark:text-gray-300 mb-3">山本: バックエンドの新しいAPIスキーマはこちらにまとめました。</p>
                             <div class="flex space-x-3">
+                                <!-- PDFファイル -->
                                 <div class="flex items-center p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm w-1/2 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition">
                                     <div class="w-8 h-8 bg-red-500 text-white rounded flex items-center justify-center font-bold text-xs mr-3">PDF</div>
                                     <p class="text-sm truncate">API_Schema_v2.0.pdf</p>
                                 </div>
+                                <!-- Excelファイル -->
                                 <div class="flex items-center p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm w-1/2 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition">
                                     <div class="w-8 h-8 bg-green-500 text-white rounded flex items-center justify-center font-bold text-xs mr-3">XLS</div>
                                     <p class="text-sm truncate">費用見積もり.xlsx</p>
@@ -348,7 +429,8 @@
                             </div>
                         </div>
                         
-                         <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 material-card-shadow">
+                         <!-- 通常投稿 -->
+                        <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 material-card-shadow">
                             <p class="text-sm text-gray-700 dark:text-gray-300">佐藤: このプロジェクトの主要な目標は市場投入までの期間を短縮することです。リソースはすべて揃っています。</p>
                             <span class="text-xs text-gray-500 block mt-2">投稿: 3分前</span>
                         </div>
@@ -356,11 +438,14 @@
                 </div>
             </section>
 
+            <!-- 4. メンバーリストページ (再利用) - モバイル下部パディング追加 -->
             <section id="member-list-section" class="px-4 pt-4 space-y-4 hidden pb-24 md:pb-4">
                 <h2 class="text-xl font-bold text-gray-800 dark:text-e0e0e0">👥 メンバーリスト </h2>
 
+                <!-- メンバーカテゴリ: 所属会社の社員 -->
                 <div class="space-y-3">
                     <h3 class="text-lg font-bold primary-text border-b pb-2">所属会社の社員 (5名)</h3>
+                    <!-- 社員カード (デモ) -->
                     <div class="flex items-center p-3 bg-white dark:bg-gray-800 rounded-xl material-card-shadow">
                         <div class="w-10 h-10 bg-orange-200 dark:bg-orange-600 rounded-full flex items-center justify-center font-bold text-orange-800 dark:text-white mr-3">自</div>
                         <div>
@@ -377,8 +462,10 @@
                     </div>
                 </div>
 
+                    <!-- メンバーカテゴリ: 友達 (他社・フリーランスなど) -->
                     <div class="space-y-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-bold primary-text border-b pb-2">友達 (3名)</h3>
+                    <!-- 友達カード (デモ) -->
                     <div class="flex items-center p-3 bg-white dark:bg-gray-800 rounded-xl material-card-shadow opacity-90">
                         <div class="w-10 h-10 bg-purple-200 dark:bg-purple-600 rounded-full flex items-center justify-center font-bold text-purple-800 dark:text-white mr-3">佐</div>
                         <div>
@@ -396,31 +483,37 @@
                 </div>
             </section>
 
+            <!-- 7. プロフィールセクション (新規追加) - モバイル下部パディング追加 -->
             <section id="profile-section" class="px-4 pt-4 space-y-6 hidden pb-24 md:pb-6">
-                     <h2 class="text-xl font-bold text-gray-800 dark:text-e0e0e0">👤 プロフィール設定</h2>
+                 <h2 class="text-xl font-bold text-gray-800 dark:text-e0e0e0">👤 プロフィール設定</h2>
 
                 <div class="material-card-shadow rounded-xl bg-white dark:bg-gray-800 p-4 space-y-4">
                     <h3 class="text-lg font-bold primary-text border-b pb-2">基本情報</h3>
                     
+                    <!-- トップ画像 (アバター) 変更エリア -->
                     <div class="text-center pb-4">
                         <div id="profile-avatar-display" class="profile-avatar relative inline-block">
-                            </div>
+                            <!-- アバター画像/イニシャルが表示される -->
+                        </div>
                         <p class="text-xs text-gray-500 mb-2">現在のトップ画像</p>
                         <button onclick="changeAvatar()" class="text-sm font-semibold text-blue-500 hover:text-blue-400 transition">
                             トップ画像をアップロード/変更
                         </button>
                     </div>
 
+                    <!-- 氏名 -->
                     <div>
                         <label for="profile-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">氏名 (必須)</label>
                         <input type="text" id="profile-name" value="山田 太郎" class="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:border-orange-500">
                     </div>
 
+                    <!-- フリガナ -->
                     <div>
                         <label for="profile-furigana" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">フリガナ (必須)</label>
                         <input type="text" id="profile-furigana" value="ヤマダ タロウ" class="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:border-orange-500">
                     </div>
 
+                    <!-- 部署 -->
                     <div>
                         <label for="profile-dept" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">所属部署</label>
                         <input type="text" id="profile-dept" value="開発部" placeholder="任意" class="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:border-orange-500">
@@ -430,31 +523,34 @@
                 <div class="material-card-shadow rounded-xl bg-white dark:bg-gray-800 p-4 space-y-4">
                     <h3 class="text-lg font-bold primary-text border-b pb-2">連絡先と認証情報</h3>
                     
+                    <!-- メールアドレス -->
                     <div>
                         <label for="profile-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">メールアドレス</label>
                         <input type="email" id="profile-email" value="yamada.taro@example.com" class="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:border-orange-500">
                     </div>
                     
+                    <!-- 電話番号 -->
                     <div>
                         <label for="profile-phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">電話番号</label>
                         <input type="tel" id="profile-phone" value="090-XXXX-XXXX" class="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:border-orange-500">
                     </div>
 
+                    <!-- パスワード変更 -->
                     <div class="pt-2">
                         <label for="profile-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">パスワード</label>
                         <input type="password" id="profile-password" placeholder="新しいパスワードを入力" class="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:border-orange-500">
                         <p class="text-xs text-gray-500 mt-1">変更しない場合は空欄のままにしてください。</p>
                     </div>
 
+                    <!-- 保存ボタン -->
                     <button onclick="updateProfile()" class="w-full primary-button text-white font-bold p-3 rounded-xl transition mt-4">
                         変更を保存
                     </button>
-                    <button onclick="handleLogout()" class="w-full py-3 border border-gray-300 rounded-xl text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition mt-2">
-                        ログアウト
-                    </button>
                 </div>
 
+                <!-- 会社管理者向けボタン (ID 1 のユーザーが管理者であることをシミュレート) -->
                 <div id="admin-link-container" class="space-y-4">
+                    <!-- 管理者向けのセクション -->
                     <div id="admin-tools" class="border-t pt-6">
                         <h3 class="text-lg font-bold text-gray-800 dark:text-e0e0e0 mb-3">管理者ツール</h3>
                         <button onclick="showSection('admin-staff-list')" class="w-full py-3 border-dashed border-2 border-orange-500 text-orange-500 rounded-lg hover:bg-orange-50 dark:hover:bg-gray-700 transition">
@@ -466,6 +562,7 @@
 
             </section>
 
+            <!-- 8. 会社スタッフ一覧（管理画面） (新規追加) -->
             <section id="admin-staff-list-section" class="hidden fixed inset-0 bg-white dark:bg-gray-900 z-50 overflow-y-auto">
                 <div class="bg-white dark:bg-gray-800 p-4 border-b material-card-shadow sticky top-0 z-40">
                     <div class="flex justify-between items-center">
@@ -480,16 +577,18 @@
                 </div>
 
                 <div class="p-4 space-y-6 pb-24 md:pb-6">
+                    <!-- 検索と一括操作 -->
                     <div class="flex space-x-3">
                         <input type="text" placeholder="名前、部署で検索..." class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 focus:outline-none focus:border-orange-500">
                     </div>
                     <div class="flex justify-between items-center text-sm">
                         <p class="text-gray-600 dark:text-gray-400">合計スタッフ数: <span id="staff-count">0</span>名</p>
                         <button onclick="openCsvImportModal()" class="text-blue-500 hover:text-blue-400 transition font-semibold">
-                            📥 CSVで一括追加
+                             📥 CSVで一括追加
                         </button>
                     </div>
 
+                    <!-- スタッフリスト (テーブル形式) -->
                     <div class="overflow-x-auto bg-white dark:bg-gray-800 rounded-xl material-card-shadow">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-700">
@@ -501,19 +600,23 @@
                                 </tr>
                             </thead>
                             <tbody id="staff-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                </tbody>
+                                <!-- JSによってスタッフデータがここに描画される -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </section>
             
+            <!-- 9. スタッフ編集/追加モーダル (新規追加) -->
             <div id="staff-edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 flex items-center justify-center p-4">
                 <div class="bg-white dark:bg-gray-800 rounded-xl material-card-shadow w-full max-w-md p-6 overflow-y-auto max-h-full">
                     <h3 id="staff-edit-title" class="text-lg font-bold primary-text border-b pb-2 mb-4">スタッフ情報の編集</h3>
                     
                     <div id="staff-edit-form" class="space-y-4">
+                        <!-- トップ画像 (アバター) 変更エリア - 新規追加 -->
                         <div class="text-center border-b pb-4">
                             <div id="edit-avatar-display" class="profile-avatar relative inline-block">
+                                <!-- アバター画像/イニシャルが表示される -->
                                 <div class="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center text-3xl font-bold">?</div>
                             </div>
                             <button onclick="showTemporaryMessage('トップ画像変更機能をシミュレートします。')" class="text-sm font-semibold text-blue-500 hover:text-blue-400 transition mt-2">
@@ -521,32 +624,39 @@
                             </button>
                         </div>
                         
+                        <!-- 氏名 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">氏名 (必須)</label>
                             <input type="text" id="edit-name" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
                         </div>
+                        <!-- フリガナ - 新規追加 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">フリガナ (必須)</label>
                             <input type="text" id="edit-furigana" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
                         </div>
+                        <!-- メールアドレス -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">メールアドレス</label>
                             <input type="email" id="edit-email" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
                         </div>
+                        <!-- 電話番号 - 新規追加 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">電話番号</label>
                             <input type="tel" id="edit-phone" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
                         </div>
+                        <!-- 部署 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">部署</label>
                             <input type="text" id="edit-dept" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
                         </div>
+                        <!-- パスワード - 新規追加 -->
                         <div>
                             <label id="edit-password-label" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">パスワード (変更しない場合は空欄)</label>
                             <input type="password" id="edit-password" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
                             <p id="edit-password-note" class="text-xs text-gray-500 mt-1">※ 新規作成時は必須、編集時は空欄の場合は変更されません。</p>
                         </div>
 
+                        <!-- 管理者権限 -->
                         <div class="flex items-center pt-2">
                             <input type="checkbox" id="edit-is-admin" class="h-5 w-5 rounded form-checkbox text-orange-500 focus:ring-orange-500 border-gray-300 dark:border-gray-600">
                             <label for="edit-is-admin" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">会社管理者として設定</label>
@@ -560,6 +670,7 @@
                 </div>
             </div>
 
+            <!-- 10. CSVインポートモーダル (新規追加) -->
             <div id="csv-import-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 flex items-center justify-center p-4">
                 <div class="bg-white dark:bg-gray-800 rounded-xl material-card-shadow w-full max-w-md p-6">
                     <h3 class="text-lg font-bold primary-text border-b pb-2 mb-4">CSVによる一括スタッフ追加</h3>
@@ -582,10 +693,12 @@
             </div>
 
 
+        <!-- フロー・ジャンプ モーダル (再利用) -->
         <div id="jump-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-40 flex items-center justify-center p-4">
             <div class="bg-white dark:bg-gray-800 rounded-xl material-card-shadow w-full max-w-md p-6">
                 <h3 class="text-lg font-bold primary-text border-b pb-2 mb-4">フロー・ジャンプ (スキップ)</h3>
                 
+                <!-- ターゲットを動的に表示するエリア -->
                 <p id="jump-target-display" class="text-sm text-gray-600 dark:text-gray-400 mb-3"></p>
 
                 <textarea id="jump-reason" placeholder="スキップする理由を必ず入力してください (透明性確保)" class="w-full p-3 border rounded-lg mt-4 mb-4 resize-none bg-gray-50 dark:bg-gray-700 dark:border-gray-600" rows="3"></textarea>
@@ -597,11 +710,29 @@
             </div>
         </div>
 
+        <!-- 簡易メッセージボックス (新規追加) -->
         <div id="message-box" class="fixed bottom-20 md:bottom-10 left-1/2 transform -translate-x-1/2 px-4 py-3 bg-gray-900 text-white text-sm rounded-lg shadow-lg z-50 hidden transition-opacity duration-300 opacity-0">
             メッセージ
         </div>
 
 
     </div>
+
+    <!-- PWA Service Workerの登録とメインスクリプトの読み込み -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // 🚨 GitHub Pagesでサブディレクトリを使用している場合、sw.jsへのパスを修正する必要があります
+                // 例: navigator.serviceWorker.register('/task-pass/sw.js')
+                navigator.serviceWorker.register('/sw.js') 
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
