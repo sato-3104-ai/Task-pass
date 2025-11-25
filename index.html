@@ -8,11 +8,11 @@
     <!-- 🚨 注意: リポジトリ名が異なる場合は、以下の "task-pass" をお客様のリポジトリ名に変更してください。 -->
     <base href="/task-pass/"> 
     
-    <!-- 外部CSSとJSの読み込み - 絶対パスに修正し、ベースパスの影響を回避 -->
-    <link rel="stylesheet" href="/task-pass/style.css">
-    <link rel="manifest" href="/task-pass/manifest.json">
+    <!-- 外部CSSとJSの読み込み - ベースパス設定の影響を受けないよう、相対パス（ファイル名のみ）に修正 -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="/task-pass/main.js" defer></script>
+    <script src="main.js" defer></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
